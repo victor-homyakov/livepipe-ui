@@ -78,7 +78,7 @@ Control.ProgressBar = Class.create({
             this.executer.stop(); }
         this.container.removeClassName(this.options.classNames.active);
         this.container.addClassName(this.options.classNames.inactive);
-        if (typeof reset  === 'undefined' || reset === true) {
+        if (typeof reset === 'undefined' || reset === true) {
             this.reset(); }
     },
     step: function(amount){
