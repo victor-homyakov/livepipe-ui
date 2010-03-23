@@ -37,14 +37,15 @@ Control.Tabs = Class.create({
             hideFunction: Element.hide
         };
         Object.extend(this.options,options || {});
-        (typeof(this.options.linkSelector == 'string') ? 
-            $(tab_list_container).select(this.options.linkSelector) : 
+        var windowHref = (Prototype.Browser.WebKit ? decodeURIComponent(window.location.href) : window.location.href).split('#')[0];
+        (typeof(this.options.linkSelector == 'string') ?
+            $(tab_list_container).select(this.options.linkSelector) :
             this.options.linkSelector($(tab_list_container))
         ).findAll(function(link){
-            return (/^#/).exec((Prototype.Browser.WebKit ? decodeURIComponent(link.href) : link.href).replace(window.location.href.split('#')[0],''));
+            return (/^#/).exec((Prototype.Browser.WebKit ? decodeURIComponent(link.href) : link.href).replace(windowHref,''));
         }).each(function(link){
             this.addTab(link);
-        }.bind(this));
+        },this);
         this.containers.values().each(Element.hide);
         if(this.options.defaultTab == 'first') {
             this.setActiveTab(this.links.first());
@@ -58,7 +59,7 @@ Control.Tabs = Class.create({
                 this.setActiveTab(this.links.find(function(link){
                     return link.key == target;
                 }));
-            }.bind(this));
+            },this);
         }
         if(this.options.autoLinkExternal){
             $A(document.getElementsByTagName('a')).each(function(a){
@@ -72,7 +73,7 @@ Control.Tabs = Class.create({
                         }
                     }
                 }
-            }.bind(this));
+            },this);
         }
     },
     addTab: function(link){
@@ -105,7 +106,7 @@ Control.Tabs = Class.create({
                 this.options.hideFunction(this.activeContainer); }
             this.links.each(function(item){
                 (this.options.setClassOnContainer ? $(item.parentNode) : item).removeClassName(this.options.activeClassName);
-            }.bind(this));
+            },this);
             (this.options.setClassOnContainer ? $(link.parentNode) : link).addClassName(this.options.activeClassName);
             this.activeContainer = this.containers.get(link.key);
             this.activeLink = link;
@@ -119,7 +120,7 @@ Control.Tabs = Class.create({
                 this.setActiveTab(this.links[i + 1]);
                 throw $break;
             }
-        }.bind(this));
+        },this);
     },
     previous: function(){
         this.links.each(function(link,i){
@@ -127,7 +128,7 @@ Control.Tabs = Class.create({
                 this.setActiveTab(this.links[i - 1]);
                 throw $break;
             }
-        }.bind(this));
+        },this);
     },
     first: function(){
         this.setActiveTab(this.links.first());
