@@ -7,11 +7,13 @@
  * @require prototype.js
  */
 
+/*global $, $A, $break, Class, Control, Element, Event, Node */
+
 if(typeof(Control) == 'undefined')
     Control = {};
-    
+
 var $proc = function(proc){
-    return typeof(proc) == 'function' ? proc : function(){return proc};
+    return typeof(proc) == 'function' ? proc : function(){return proc;};
 };
 
 var $value = function(value){
@@ -71,14 +73,15 @@ Object.Event = {
             object.prototype.stopObserving = object.stopObserving;
             object.prototype.observeOnce = object.observeOnce;
             object.prototype.notify = function(event_name){
+                var args;
                 if(object.notify){
-                    var args = $A(arguments).slice(1);
+                    args = $A(arguments).slice(1);
                     args.unshift(this);
                     args.unshift(event_name);
                     object.notify.apply(object,args);
                 }
                 this._objectEventSetup(event_name);
-                var args = $A(arguments).slice(1);
+                args = $A(arguments).slice(1);
                 var collected_return_values = [];
                 try{
                     if(this.options && this.options[event_name] && typeof(this.options[event_name]) == 'function')
@@ -141,7 +144,7 @@ var IframeShim = Class.create({
         this.element = new Element('iframe',{
             style: 'position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);display:none',
             src: 'javascript:void(0);',
-            frameborder: 0 
+            frameborder: 0
         });
         $(document.body).insert(this.element);
     },
@@ -154,9 +157,8 @@ var IframeShim = Class.create({
         return this;
     },
     positionUnder: function(element) {
-        var element = $(element);
-        var offset = element.cumulativeOffset();
-        var dimensions = element.getDimensions();
+        element = $(element);
+        var offset = element.cumulativeOffset(), dimensions = element.getDimensions();
         this.element.setStyle({
             left: offset[0] + 'px',
             top: offset[1] + 'px',
@@ -167,7 +169,7 @@ var IframeShim = Class.create({
         return this;
     },
     setBounds: function(bounds) {
-        for(prop in bounds)
+        for(var prop in bounds)
             bounds[prop] += 'px';
         this.element.setStyle(bounds);
         return this;
