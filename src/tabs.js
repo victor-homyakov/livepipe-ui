@@ -30,6 +30,7 @@ Control.Tabs = Class.create({
             linkSelector: 'li a',
             setClassOnContainer: false,
             activeClassName: 'active',
+            inactiveClassName: 'inactive',
             defaultTab: 'first',
             autoLinkExternal: true,
             targetRegExp: /#(.+)$/,
@@ -78,6 +79,7 @@ Control.Tabs = Class.create({
     },
     addTab: function(link){
         this.links.push(link);
+        //link.key = link.getAttribute('href').replace(window.location.href.split('#')[0],'').split('/').last().replace(/#/,'');
         link.key = link.getAttribute('href').replace(window.location.href.split('#')[0],'').split('#').last().replace(/#/,'');
         var container = $(link.key);
         if(!container) {
@@ -89,6 +91,15 @@ Control.Tabs = Class.create({
             this.setActiveTab(link);
             return false;
         }.bind(this,link);
+    },
+    removeTab: function(link){
+        var link_href = link.getAttribute('href');
+        var links = this.links.reject(function(l) {
+            return link_href == l.getAttribute('href');
+        });
+        this.links = links;
+        link.key = link_href.replace(window.location.href.split('#')[0],'').split('/').last().replace(/#/,'');
+        this.containers.unset(link.key);
     },
     setActiveTab: function(link){
         if(!link && typeof(link) == 'undefined') {
@@ -105,9 +116,9 @@ Control.Tabs = Class.create({
             if(this.activeContainer) {
                 this.options.hideFunction(this.activeContainer); }
             this.links.each(function(item){
-                (this.options.setClassOnContainer ? $(item.parentNode) : item).removeClassName(this.options.activeClassName);
+                (this.options.setClassOnContainer ? $(item.parentNode) : item).addClassName(this.options.inactiveClassName).removeClassName(this.options.activeClassName);
             },this);
-            (this.options.setClassOnContainer ? $(link.parentNode) : link).addClassName(this.options.activeClassName);
+            (this.options.setClassOnContainer ? $(link.parentNode) : link).addClassName(this.options.activeClassName).removeClassName(this.options.inactiveClassName);
             this.activeContainer = this.containers.get(link.key);
             this.activeLink = link;
             this.options.showFunction(this.containers.get(link.key));
